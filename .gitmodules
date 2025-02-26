@@ -1,0 +1,7 @@
+[submodule "external/hsw-nbt"]
+	path = external/hsw-nbt
+	url = https://github.com/Infineon/optiga-nbt-lib-c.git
+[submodule "extra/optiga-nbt-rpi-port"]
+	path = extra/optiga-nbt-rpi-port
+	url = https://github.com/Pushyanth-Infineon/optiga-nbt-rpi-port.git
+	branch = develop
