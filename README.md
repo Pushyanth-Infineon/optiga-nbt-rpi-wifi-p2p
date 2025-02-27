@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: Copyright (c) 2024 Infineon Technologies AG
 SPDX-License-Identifier: MIT
 -->
 
-# Interfacing OPTIGA&trade; Authenticate NBT with Raspberry Pi
+# OPTIGA&trade; Authenticate NBT with Raspberry Pi - Sample project
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 [![REUSE Compliance Check](https://github.com/Infineon/optiga-nbt-lib-c/actions/workflows/linting-test.yml/badge.svg?branch=main)](https://github.com/Infineon/optiga-nbt-lib-c/actions/workflows/linting-test.yml)
@@ -57,7 +57,7 @@ dtparam=i2c_arm_baudrate=400000
 sudo apt-get update
 
 #Install the toolset
-sudo apt-get install cmake gcc make
+sudo apt-get install cmake gcc make g++
 ```
 
 # Overview
@@ -77,17 +77,21 @@ Here are the detailed steps for compiling and installing as library:
 # 1. Change to the directory where the project is located:
 cd path/to/repository
 
-# 2. Create a build folder in the root path 
+# 2. Clone the gitmodules
+git submodule init
+git submodule update
+
+# 3. Create a build folder in the root path 
 mkdir build
 cd build
 
-# 3. Run CMake to configure the build system
+# 4. Run CMake to configure the build system
 cmake -S ..
 
-# 4. Build the code
+# 5. Build the code
 cmake --build .
 
-# 5. The executable will be present in the build folder. Run the executable
+# 6. The executable will be present in the build folder. Run the executable
 ./nbt-rpi
 ```
 
