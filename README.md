@@ -9,13 +9,14 @@ SPDX-License-Identifier: MIT
 [![REUSE Compliance Check](https://github.com/Infineon/optiga-nbt-lib-c/actions/workflows/linting-test.yml/badge.svg?branch=main)](https://github.com/Infineon/optiga-nbt-lib-c/actions/workflows/linting-test.yml)
 [![CMake Build](https://github.com/Infineon/optiga-nbt-lib-c/actions/workflows/build-test.yml/badge.svg?branch=main)](https://github.com/Infineon/optiga-nbt-lib-c/actions/workflows/cmake-single-platform.yml)
 
-This is a sample project to use OPTIGA NBT in raspberry Pi 4/5 devices.
+This is a sample project to implement WiFi static connection handover using OPTIGA&trade; Authenticate NBT interfaced with Raspberry Pi.
 
+WiFi static connection handover is a technique used to establish a WiFi P2P (Peer-to-Peer) connection, also known as WiFi Direct, between two devices. This technology enables devices to connect to each other directly, without the need for a traditional WiFi access point.
 
-## Setup and requirements
+## Hardware requirements
+
 This section contains information on how to setup and interface the OPTIGA™ Authenticate NBT with Raspberry Pi.
 
-### Hardware requirements
 1. Raspberry Pi 4/5
 2. OPTIGA&trade; Authenticate NBT Development Shield
 
@@ -60,15 +61,68 @@ sudo apt-get update
 sudo apt-get install cmake gcc make g++
 ```
 
-# Overview
+## WiFi Direct setup in Raspberry Pi 
+Follow the steps in this [link](https://raspberrypi.stackexchange.com/questions/117238/connect-android-smartphone-with-wi-fi-direct-to-a-raspberry-pi#:~:text=%E2%99%A6%20Wi%2DFi%20Direct%20with%20a%20DHCP%20server%20on%20the%20Group%20Owner) to configure wpa_supplicant and set the Raspberry Pi to become the Group Owner (GO).
 
-The program will perform the following:
- - Select Type 4 Tag application
- - Select application with File ID: E1A1 and length = 1
- - Write one byte (0xEE) to the file.
- - Read back one byte from the file.
+Ensure you perform the following steps as mentioned in the above link:
 
-## CMake build system
+```sh
+sudo apt-get update
+sudo apt install nmap
+```
+Follow the Quick Step, creating wpa_supplicant, enabling it upto the point of creating static ip address and enabling the DHCP server.
+
+Reboot the system for changes to be effective.
+
+
+# Create NDEF message
+
+The necessary information to establish a WiFi connection handover such as SSID and MAC address of the Raspberry Pi need to be stored in OPTIGA&trade; Authenticate NBT.
+
+Create an NDEF message structure for Wi-Fi configuration using the [ndef library](https://ndeflib.readthedocs.io/en/latest/records/wifi.html#connection-handover) as provided in the below script:
+
+```py
+import ndef
+import hashlib
+
+def hex_to_array(data: bytes) -> str:
+    print("{", end = "")
+    for i in range(len(data)):
+        print(f"0x{data[i]:02x}", end = "")
+        if ((i + 1) != len(data)):
+            print(", ", end = "")
+    print("}")
+
+pkhash = hashlib.sha256(b'DUMMY').digest()[0:20]
+oobpwd = ndef.wifi.OutOfBandPassword(pkhash, 0x0007, b'')
+wfaext = ndef.wifi.WifiAllianceVendorExtension(('version-2', b'\x20'))
+carrier = ndef.WifiSimpleConfigRecord()
+carrier.name = '0'
+SSID = b'DIRECT-RasPi1'
+mac_address = bytes(bytearray([0xDE, 0xA6, 0x32, 0xAA, 0X45, 0xBA]))
+carrier.set_attribute('oob-password', oobpwd)
+carrier.set_attribute('ssid', SSID)
+carrier.set_attribute('rf-bands', '2.4GHz')
+carrier.set_attribute('ap-channel', 6)
+carrier.set_attribute('mac-address', mac_address)
+carrier['vendor-extension'] = [wfaext.encode()]
+hs = ndef.handover.HandoverSelectRecord('1.3')
+hs.add_alternative_carrier('active', carrier.name)
+octets = b''.join(ndef.message_encoder([hs, carrier]))
+
+# Add length to the NDEF message
+octets = bytes(bytearray([(len(octets) >> 8), (len(octets) & 0xFF)])) + octets
+hex_to_array(octets)
+```
+Modify the ```mac_address``` to the MAC address of your Raspberry Pi and ```SSID``` to the device name set in ```wpa_supplicant-wlan0.conf```.
+
+Run the script to generate the octets.
+
+## Write NDEF message to OPTIGA&trade; Authenticate NBT
+
+Add the above generated octets to the array ```WIFI_CONNECTION_HANDOVER_MESSAGE[]``` in the source/main.c file.
+
+#### CMake build system
 
 To build this project, configure CMake and use `cmake --build` to perform the compilation.
 Here are the detailed steps for compiling and installing as library:
@@ -94,4 +148,12 @@ cmake --build .
 # 6. The executable will be present in the build folder. Run the executable
 ./nbt-rpi
 ```
+
+## Android application
+
+
+
+## Operational flow
+
+
 
