@@ -17,8 +17,8 @@ WiFi static connection handover is a technique used to establish a WiFi P2P (Pee
 
 This section contains information on how to setup and interface the OPTIGA™ Authenticate NBT with Raspberry Pi.
 
-1. Raspberry Pi 4/5
-2. OPTIGA&trade; Authenticate NBT Development Shield
+- Raspberry Pi 4/5
+- OPTIGA&trade; Authenticate NBT Development Shield
 
 **Table 1. Mapping of the OPTIGA&trade; Authenticate NBT Development Shield's pins to Raspberry Pi**
 
@@ -62,17 +62,19 @@ sudo apt-get install cmake gcc make g++
 ```
 
 ## WiFi Direct setup in Raspberry Pi 
-Follow the steps in this [link](https://raspberrypi.stackexchange.com/questions/117238/connect-android-smartphone-with-wi-fi-direct-to-a-raspberry-pi#:~:text=%E2%99%A6%20Wi%2DFi%20Direct%20with%20a%20DHCP%20server%20on%20the%20Group%20Owner) to configure wpa_supplicant and set the Raspberry Pi to become the Group Owner (GO).
+In a WiFi Direct network, devices are organized into groups, with each group having a designated Group Owner (GO). The Group Owner plays a crucial role in managing the network and one of its key responsibilities is to ensure that only one DHCP server is present in the group.
 
-Ensure you perform the following steps as mentioned in the above link:
+To achieve this, it's necessary to set the Raspberry Pi as the Group Owner in the WiFi Direct group and the below steps will take care of that:
 
-```sh
-sudo apt-get update
-sudo apt install nmap
-```
-Follow the Quick Step, creating wpa_supplicant, enabling it upto the point of creating static ip address and enabling the DHCP server.
+Follow the steps in this link to configure wpa_supplicant and set the Raspberry Pi to become the Group Owner (GO).
 
-Reboot the system for changes to be effective.
+Ensure you perform the following steps as mentioned in this [link](https://raspberrypi.stackexchange.com/questions/117238/connect-android-smartphone-with-wi-fi-direct-to-a-raspberry-pi#:~:text=Wi%2DFi%20Direct%20with%20a%20DHCP%20server%20on%20the%20Group%20Owner):
+
+1. Install nmap
+2. Follow the Quick Step
+3. Create wpa_supplicant and enable it 
+4. Create static IP address and enable the DHCP server.
+5. Reboot the system for changes to be effective.
 
 
 # Create NDEF message
@@ -122,7 +124,7 @@ Run the script to generate the octets.
 
 Add the above generated octets to the array ```WIFI_CONNECTION_HANDOVER_MESSAGE[]``` in the source/main.c file.
 
-#### CMake build system
+### CMake build system
 
 To build this project, configure CMake and use `cmake --build` to perform the compilation.
 Here are the detailed steps for compiling and installing as library:
@@ -151,9 +153,36 @@ cmake --build .
 
 ## Android application
 
+Follow the steps provided in [optiga-nbt-example-perso-android](https://github.com/Pushyanth-Infineon/optiga-nbt-example-perso-android) for testing out the WiFi static handover. 
 
+The mobile phone app needs to be installed on the mobile phone:
+
+- For installing Android applications, it is recommended to use Android Studio
+- For installing iOS applications, it is recommended to use Xcode
 
 ## Operational flow
 
+1. Verify that both the hardware connections and software setup are properly established.
 
+2. Set Raspberry Pi as the Group Owner in the WiFi Direct group.
 
+3. Create an NDEF message and write it to OPTIGA&trade; Authenticate NBT.
+
+4. The mobile phone app needs to be installed on the mobile phone. Launch the app and select the WiFi static handover application.
+
+5. Tap the OPTIGA™ Authenticate NBT to the NFC antenna of the mobile phone. You will see the below images on your mobile phone:
+
+![NBT WiFi conn. handover](./images/1NBT.png)
+
+![Discover initiated](./images/2NBT.png)
+
+6. Run the following commands on Raspberry Pi:
+```sh
+wpa_cli -i p2p-dev-wlan0 set config_methods virtual_push_button
+wpa_cli -i p2p-dev-wlan0 p2p_find
+
+#Copy the MAC address of the mobile phone and replace in the below command
+wpa_cli -i p2p-dev-wlan0 p2p_connect de:a6:32"aa"45:ba pbc
+```
+
+7. Run the python script below to establish a socket connection with the mobile phone. You will receive the data "Sending some text." in the 
