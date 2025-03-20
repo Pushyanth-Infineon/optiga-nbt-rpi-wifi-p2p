@@ -174,7 +174,7 @@ The mobile phone app needs to be installed on the mobile phone:
 
 ![NBT WiFi conn. handover](./images/1NBT.png)
 
-![Discover initiated](./images/2NBT.png)
+![Discovery initiated and successfully connected](./images/2NBT.png)
 
 6. Run the following commands on Raspberry Pi:
 ```sh
