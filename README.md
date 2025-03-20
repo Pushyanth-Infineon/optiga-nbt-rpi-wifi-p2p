@@ -81,41 +81,8 @@ Ensure you perform the following steps as mentioned in this [link](https://raspb
 
 The necessary information to establish a WiFi connection handover such as SSID and MAC address of the Raspberry Pi need to be stored in OPTIGA&trade; Authenticate NBT.
 
-Create an NDEF message structure for Wi-Fi configuration using the [ndef library](https://ndeflib.readthedocs.io/en/latest/records/wifi.html#connection-handover) as provided in the below script:
+Create an NDEF message structure for Wi-Fi configuration using the [ndef library](https://ndeflib.readthedocs.io/en/latest/records/wifi.html#connection-handover) as provided in ```./scripts/create_NDEF_message.py```
 
-```py
-import ndef
-import hashlib
-
-def hex_to_array(data: bytes) -> str:
-    print("{", end = "")
-    for i in range(len(data)):
-        print(f"0x{data[i]:02x}", end = "")
-        if ((i + 1) != len(data)):
-            print(", ", end = "")
-    print("}")
-
-pkhash = hashlib.sha256(b'DUMMY').digest()[0:20]
-oobpwd = ndef.wifi.OutOfBandPassword(pkhash, 0x0007, b'')
-wfaext = ndef.wifi.WifiAllianceVendorExtension(('version-2', b'\x20'))
-carrier = ndef.WifiSimpleConfigRecord()
-carrier.name = '0'
-SSID = b'DIRECT-RasPi1'
-mac_address = bytes(bytearray([0xDE, 0xA6, 0x32, 0xAA, 0X45, 0xBA]))
-carrier.set_attribute('oob-password', oobpwd)
-carrier.set_attribute('ssid', SSID)
-carrier.set_attribute('rf-bands', '2.4GHz')
-carrier.set_attribute('ap-channel', 6)
-carrier.set_attribute('mac-address', mac_address)
-carrier['vendor-extension'] = [wfaext.encode()]
-hs = ndef.handover.HandoverSelectRecord('1.3')
-hs.add_alternative_carrier('active', carrier.name)
-octets = b''.join(ndef.message_encoder([hs, carrier]))
-
-# Add length to the NDEF message
-octets = bytes(bytearray([(len(octets) >> 8), (len(octets) & 0xFF)])) + octets
-hex_to_array(octets)
-```
 Modify the ```mac_address``` to the MAC address of your Raspberry Pi and ```SSID``` to the device name set in ```wpa_supplicant-wlan0.conf```.
 
 Run the script to generate the octets.
@@ -174,7 +141,7 @@ The mobile phone app needs to be installed on the mobile phone:
 
 ![NBT WiFi conn. handover](./images/1NBT.png)
 
-![Discovery initiated and successfully connected](./images/2NBT.png)
+![Discovery initiated](./images/2NBT.png)
 
 6. Run the following commands on Raspberry Pi:
 ```sh
@@ -182,7 +149,19 @@ wpa_cli -i p2p-dev-wlan0 set config_methods virtual_push_button
 wpa_cli -i p2p-dev-wlan0 p2p_find
 
 #Copy the MAC address of the mobile phone and replace in the below command
-wpa_cli -i p2p-dev-wlan0 p2p_connect de:a6:32"aa"45:ba pbc
+wpa_cli -i p2p-dev-wlan0 p2p_connect de:a6:32:aa:45:ba pbc
 ```
 
-7. Run the python script below to establish a socket connection with the mobile phone. You will receive the data "Sending some text." in the 
+![Raspberry Pi commands](./images/4NBT.png)
+
+After executing the above commands, you will see the below screen on your phone after successfully connecting to WiFi P2P network.
+
+<p align="center">
+  <img width="200" height="400" src="./images/3NBT.png">
+</p>
+
+
+7. Run the ```./scripts/socket_server_activity.py``` script to establish a socket connection with the mobile phone. 
+
+
+[./images/3NBT.png]: ./images/3NBT.png
