@@ -136,10 +136,13 @@ The mobile phone app needs to be installed on the mobile phone and for this, it 
 
 5. Tap the OPTIGA™ Authenticate NBT to the NFC antenna of the mobile phone. You will see the below images on your mobile phone:
 
-![NBT WiFi conn. handover](./images/1NBT.png)
 
 <p align="center">
-  <img width="800" height="600" src="./images/2NBT.png">
+  <img width="550" height="400" src="./images/1NBT.png">
+</p>
+
+<p align="center">
+  <img width="550" height="400" src="./images/2NBT.png">
 </p>
 
 6. Run the following commands on Raspberry Pi:
