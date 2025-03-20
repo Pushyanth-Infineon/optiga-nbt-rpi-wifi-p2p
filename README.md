@@ -70,14 +70,13 @@ Follow the steps in this link to configure wpa_supplicant and set the Raspberry 
 
 Ensure you perform the following steps as mentioned in this [link](https://raspberrypi.stackexchange.com/questions/117238/connect-android-smartphone-with-wi-fi-direct-to-a-raspberry-pi#:~:text=Wi%2DFi%20Direct%20with%20a%20DHCP%20server%20on%20the%20Group%20Owner):
 
-1. Install nmap
-2. Follow the Quick Step
-3. Create wpa_supplicant and enable it 
-4. Create static IP address and enable the DHCP server.
-5. Reboot the system for changes to be effective.
+1. Follow the Quick Step
+2. Create wpa_supplicant and enable it 
+3. Create static IP address and enable the DHCP server.
+4. Reboot the system for changes to be effective.
 
 
-# Create NDEF message
+## Create NDEF message
 
 The necessary information to establish a WiFi connection handover such as SSID and MAC address of the Raspberry Pi need to be stored in OPTIGA&trade; Authenticate NBT.
 
@@ -85,11 +84,11 @@ Create an NDEF message structure for Wi-Fi configuration using the [ndef library
 
 Modify the ```mac_address``` to the MAC address of your Raspberry Pi and ```SSID``` to the device name set in ```wpa_supplicant-wlan0.conf```.
 
-Run the script to generate the octets.
+Run the script to generate the C array which is used in the following section.
 
 ## Write NDEF message to OPTIGA&trade; Authenticate NBT
 
-Add the above generated octets to the array ```WIFI_CONNECTION_HANDOVER_MESSAGE[]``` in the source/main.c file.
+Replace the data of ```WIFI_CONNECTION_HANDOVER_MESSAGE[]``` in the source/main.c file with the data generated in the previous section.
 
 ### CMake build system
 
@@ -122,10 +121,8 @@ cmake --build .
 
 Follow the steps provided in [optiga-nbt-example-perso-android](https://github.com/Pushyanth-Infineon/optiga-nbt-example-perso-android) for testing out the WiFi static handover. 
 
-The mobile phone app needs to be installed on the mobile phone:
+The mobile phone app needs to be installed on the mobile phone and for this, it is recommended to use Android Studio.
 
-- For installing Android applications, it is recommended to use Android Studio
-- For installing iOS applications, it is recommended to use Xcode
 
 ## Operational flow
 
@@ -149,19 +146,18 @@ wpa_cli -i p2p-dev-wlan0 set config_methods virtual_push_button
 wpa_cli -i p2p-dev-wlan0 p2p_find
 
 #Copy the MAC address of the mobile phone and replace in the below command
-wpa_cli -i p2p-dev-wlan0 p2p_connect de:a6:32:aa:45:ba pbc
+wpa_cli -i p2p-dev-wlan0 p2p_connect de:a6:32:aa:45:ba pbc; sleep 3; python3 socket_server_activity.py
 ```
 
+
 ![Raspberry Pi commands](./images/4NBT.png)
+
+The last command will connect to the P2P device, wait for 3 seconds and establish socket connection to receive the data.
 
 After executing the above commands, you will see the below screen on your phone after successfully connecting to WiFi P2P network.
 
 <p align="center">
   <img width="200" height="400" src="./images/3NBT.png">
 </p>
-
-
-7. Run the ```./scripts/socket_server_activity.py``` script to establish a socket connection with the mobile phone. 
-
 
 [./images/3NBT.png]: ./images/3NBT.png
