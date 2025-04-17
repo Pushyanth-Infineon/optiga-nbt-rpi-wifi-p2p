@@ -49,6 +49,15 @@ set(BUILD_DOCUMENTATION OFF)
 #     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 # endif()
 
+# Set the source files
+set(SOURCES
+  "${CMAKE_CURRENT_SOURCE_DIR}/sources/utilities/nbt-utilities.c"
+)
+
+set(HEADERS
+	"${CMAKE_CURRENT_SOURCE_DIR}/sources/utilities/nbt-utilities.h"
+)
+
 
 # Add optiga-nbt-lib-c folder as subdirectory (in external folder)
 add_subdirectory(external/hsw-nbt)
@@ -58,5 +67,6 @@ add_subdirectory(extra/optiga-nbt-rpi-port)
 
 # Add executable (main compiled from main.c)
 add_executable(nbt-rpi source/main.c)
+target_sources(nbt-rpi PRIVATE source/utilities/nbt-utilities.c)
 
-target_link_libraries(nbt-rpi Infineon::hsw-apdu-nbt Infineon::hsw-ndef Infineon::hsw-protocol Infineon::hsw-t1prime Infineon::hsw-utils Infineon::optiga-nbt-rpi-port)
+target_link_libraries(nbt-rpi Infineon::hsw-apdu-nbt Infineon::hsw-ndef Infineon::hsw-protocol Infineon::hsw-t1prime Infineon::hsw-utils Infineon::optiga-nbt-rpi-port pthread)
