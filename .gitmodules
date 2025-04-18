@@ -4,4 +4,3 @@
 [submodule "extra/optiga-nbt-rpi-port"]
 	path = extra/optiga-nbt-rpi-port
 	url = https://github.com/Pushyanth-Infineon/optiga-nbt-rpi-port.git
-	branch = develop
