@@ -1,8 +1,9 @@
 
 import socket
+import sys
 
 # Define the server host and port
-HOST = '192.168.4.1'  # Host name
+HOST = sys.argv[1]     # Host IP address
 PORT = 5005            # Port to listen on
 
 def receive_file():
