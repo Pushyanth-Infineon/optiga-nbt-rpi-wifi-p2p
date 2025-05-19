@@ -169,3 +169,9 @@ After executing the above script, you will see the below screen on your phone af
 </p>
 
 [./images/3NBT.png]: ./images/3NBT.png
+
+
+## Release
+
+ - v1.0.0 - Initial release for wifi p2p.
+ - v2.0.0 - Added automation scripts. Now the setup uses NetworkManager instead of systemd-networkd.
