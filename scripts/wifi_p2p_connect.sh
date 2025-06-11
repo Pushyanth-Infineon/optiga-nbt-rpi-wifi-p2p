@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 Infineon Technologies AG
+# SPDX-License-Identifier: MIT
+
 #!/bin/bash
 
 # /etc/dhcpcd.conf have static ip for p2p-dev-wlan0
