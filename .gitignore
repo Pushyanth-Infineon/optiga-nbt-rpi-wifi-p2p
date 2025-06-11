@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 Infineon Technologies AG
+# SPDX-License-Identifier: MIT
+
 # Cmake files
 CMakeLists.txt.user
 CMakeCache.txt

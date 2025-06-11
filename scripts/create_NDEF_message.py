@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 Infineon Technologies AG
+# SPDX-License-Identifier: MIT
+
 import ndef
 import hashlib
 import re

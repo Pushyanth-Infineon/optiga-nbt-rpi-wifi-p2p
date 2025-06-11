@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 Infineon Technologies AG
+# SPDX-License-Identifier: MIT
+
 #!/bin/bash
 
 source $(dirname $0)/config_files.sh

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 Infineon Technologies AG
+# SPDX-License-Identifier: MIT
+
 [submodule "external/hsw-nbt"]
 	path = external/hsw-nbt
 	url = https://github.com/Infineon/optiga-nbt-lib-c.git
