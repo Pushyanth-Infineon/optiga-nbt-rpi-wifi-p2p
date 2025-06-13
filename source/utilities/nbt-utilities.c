@@ -229,7 +229,7 @@ ifx_status_t nbt_read_file(nbt_cmd_t *nbt, enum nbt_fileid file_id, uint16_t off
     // Actually read file in chunks
     for (size_t chunk_offset = 0U; chunk_offset < length; chunk_offset += 0xFFU)
     {
-        uint8_t chunk_len = ((length - (offset + chunk_offset)) < 0xFFU) ? (length - (offset + chunk_offset)) : 0xFFU;
+        uint8_t chunk_len = ((length - (chunk_offset)) < 0xFFU) ? (length - (chunk_offset)) : 0xFFU;
         status = nbt_read_binary(nbt, offset + chunk_offset, chunk_len);
         ifx_apdu_destroy(nbt->apdu);
         if (ifx_error_check(status))
